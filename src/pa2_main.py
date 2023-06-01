@@ -156,6 +156,9 @@ def get_main_parser():
         '--pid', type=str
     )
     parser.add_argument(
+        '--user', type=str
+    )
+    parser.add_argument(
         '--module_name', type=str,
         default='assignment2'
     )
@@ -171,9 +174,15 @@ if __name__ == "__main__":
     parser = get_main_parser()
     args = parser.parse_args()
     username = getpass.getuser()
+    
     if not args.output_root:
-        args.output_root = './home/{}/private/{}-pa2/test_results'.format(
+        if username == 'spark':
+            args.output_root = '/home/{}/private/{}-pa2/test_results'.format(
+            args.user, args.pid)
+        else:
+            args.output_root = './home/{}/private/{}-pa2/test_results'.format(
             username, args.pid)
+        
     task_imls = importlib.import_module(args.module_name)
     pa2 = PA2Executor(args, task_imls, task_imls.INPUT_FORMAT, args.synonmys)
     results, timings = pa2.eval()
